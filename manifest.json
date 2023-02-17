@@ -2,6 +2,7 @@
     "name": "WT Wiki Americanifier",
     "version": "1.0",
     "manifest_version": 3,
+    "default_locale": "en",
     "description": "Changes Km/h to Mph and Meters to Feet.",
     "icons": {
         "16": "icons/wtwa16x16.png",
@@ -9,6 +10,7 @@
         "48": "icons/wtwa48x48.png",
         "128": "icons/wtwa128x128.png"
     },
+    "author": "Jacob Burton",
     "content_scripts": [
      {
        "matches": ["https://wiki.warthunder.com/*"],
