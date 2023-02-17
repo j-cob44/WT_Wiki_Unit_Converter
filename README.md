@@ -3,3 +3,7 @@ JavaScript Browser Extension which changes Km/h to Mph and Meters to Feet on the
 
 Works on Aircraft, Fleet, Ground, Helicopter, and Drone pages. Please report if you find any pages that do not work correctly.
 Only runs the script "americanify.js" on https://wiki.warthunder.com/* .
+
+Sideloading:
+You can sideload the extension by downloading this project, opening your extensions page, and clicking load unpacked.
+From there, navigate to where you've downloaded the project files to and select this root folder.
