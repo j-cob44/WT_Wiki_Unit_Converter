@@ -30,8 +30,11 @@ Chromium (Chrome and Edge):
 Firefox:
 1. Download the WTWikiAmericanifier.zip from the Release Page
 2. Locate your extension page in your browser
-3. Click "Install Add-on from file" 
-4. Select the Project's Zip file
+3. Click the Gear, then Debug Addons
+4. Click Load Temporary Add-on
+5. Select the Project's Zip file
+
+The temnporary addon will be removed if you close your browser and you will have to run through these steps again.
 
 
 <br>
