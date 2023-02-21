@@ -12,6 +12,7 @@ From there, navigate to where you've downloaded the project files to and select 
 
 <br>
 
-### Example of the F-84B-26 Page:
-<img src="https://github.com/j-cob44/WT_Wiki_Americanifier/blob/master/examples/BeforeAndAfter.png" width="720px" align="center" alt="Before and After">
-
+### Examples of the F-84B-26 Page:
+<img src="https://github.com/j-cob44/WT_Wiki_Americanifier/blob/master/examples/BnA1.png" width="720px" align="center" alt="Before and After Example 1">
+<img src="https://github.com/j-cob44/WT_Wiki_Americanifier/blob/master/examples/BnA2.png" width="720px" align="center" alt="Before and After Example 2">
+<img src="https://github.com/j-cob44/WT_Wiki_Americanifier/blob/master/examples/BnA3.png" width="720px" align="center" alt="Before and After Example 3">
