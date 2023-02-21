@@ -15,6 +15,8 @@ Simply pick your flavor of store and click add to browser.
 
 [Edge Add-on Store](https://microsoftedge.microsoft.com/addons/detail/wt-wiki-americanifier/fhcbmacklepdhnjlmdiocmkdcengbgje)
 
+[Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/wt-wiki-americanifier/)
+
 <br>
 
 ### Install via Sideloading:
