@@ -1,18 +1,47 @@
-# WT_Wiki_Americanifier
-JavaScript Browser Extension which changes Km/h to Mph and Meters to Feet on the War Thunder Wiki.
+# WarThunder Wiki Americanifier
+Changes War Thunder Wiki pages of vehicles from Km/h and Meters to Mph and Feet. This only works for data in tables, this does not effect any data in paragraphs on pages.
 
 Works on Aircraft, Fleet, Ground, Helicopter, and Drone pages. Please report if you find any pages that do not work correctly.
 Only runs the script "americanify.js" on https://wiki.warthunder.com/* .
 
 <br>
 
-### Sideloading:
-You can sideload the extension by downloading this project, opening your extensions page, and clicking load unpacked.
-From there, navigate to where you've downloaded the project files to and select this root folder.
+## Installation
+
+### Installing via Stores:
+Simply pick your flavor of store and click add to browser.
+
+[Chrome Web Store](https://chrome.google.com/webstore/detail/wt-wiki-americanifier/hdkkkfpnjidndjkbgfnlfkpgpghiepkj)
+
+[Edge Add-on Store](https://microsoftedge.microsoft.com/addons/detail/wt-wiki-americanifier/fhcbmacklepdhnjlmdiocmkdcengbgje)
 
 <br>
 
-### Examples of the F-84B-26 Page:
+### Install via Sideloading:
+Chromium (Chrome and Edge):
+1. Download the WTWikiAmericanifier.zip from the Release Page
+2. Unzip the Files to any location
+3. Locate your extension page in your browser
+4. Click "Load Unpacked" 
+5. Select the project's root folder.
+
+<br>
+
+Firefox:
+1. Download the WTWikiAmericanifier.zip from the Release Page
+2. Locate your extension page in your browser
+3. Click "Install Add-on from file" 
+4. Select the Project's Zip file
+
+
+<br>
+
+## Examples of the F-84B-26 Page:
 <img src="https://github.com/j-cob44/WT_Wiki_Americanifier/blob/master/examples/BnA1.png" width="720px" align="center" alt="Before and After Example 1">
 <img src="https://github.com/j-cob44/WT_Wiki_Americanifier/blob/master/examples/BnA2.png" width="720px" align="center" alt="Before and After Example 2">
 <img src="https://github.com/j-cob44/WT_Wiki_Americanifier/blob/master/examples/BnA3.png" width="720px" align="center" alt="Before and After Example 3">
+
+<br>
+
+### Problems?
+Report them as an issue here, through any extension store page, or through email here: jbswebapps@gmail.com
