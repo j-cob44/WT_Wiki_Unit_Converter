@@ -14,5 +14,10 @@
      {
        "matches": ["https://wiki.warthunder.com/*"],
        "js": ["americanify.js"]
-     }]
+     }],
+     "browser_specific_settings": {
+       "gecko": {
+         "id": "{45d113f1-fd22-4649-9d5d-22d1bc3b8fd5}"
+       }
+     }
 }
