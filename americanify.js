@@ -1,17 +1,41 @@
+async function loadOptions() {
+  return chrome.storage.sync.get({speed: "mph", altitude: "feet", climbSpeed: "feet/minute"});
+}
+
 // Conversion Functions
-function convertAltitude(meters){
-  var feet = meters * 3.28;
-  return feet.toFixed(0);
+function convertAltitude(meters, options) {
+  switch (options.altitude) {
+    case "meters":
+      return meters;
+    case "feet":
+      return (meters * 3.28).toFixed(0);
+    default:
+      throw new Error("Unknown altitude unit \"" + options.altitude + "\"");
+  }
 }
 
-function convertClimbSpeed(metersPerSecond){
-  var feet = metersPerSecond * 60 * 3.28;
-  return feet.toFixed(0);
+function convertClimbSpeed(metersPerSecond, options) {
+  switch (options.climbSpeed) {
+    case "meters/second":
+      return metersPerSecond;
+    case "feet/minute":
+      return (metersPerSecond * 60 * 3.28).toFixed(0);
+    default:
+      throw new Error("Unknown climb speed unit \"" + options.climbSpeed + "\"");
+  }
 }
 
-function convertSpeed(kmh){
-  var mph = kmh / 1.609344;
-  return mph.toFixed(0);
+function convertSpeed(kmh, options) {
+  switch (options.speed) {
+    case "km/h":
+      return kmh;
+    case "mph":
+      return (kmh / 1.609344).toFixed(0);
+    case "kts":
+      return (kmh / 1.851999278976).toFixed(0);
+    default:
+      throw new Error("Unknown speed unit \"" + options.speed + "\"");
+  }
 }
 
 // Parse Functions
@@ -29,6 +53,7 @@ function ParseValue(input){
 }
 
 async function main() {
+  const options = await loadOptions();
   // Main Code
   var page_type;
   // Determine Page Type;
@@ -81,18 +106,18 @@ async function main() {
       var plane_speed_value = plane_speed.getElementsByClassName("value")[1];
 
       // Convert Max speed at altitude
-      var max_speed_at_feet = convertAltitude(ParseValue(plane_speed_alti.innerHTML));
-      plane_speed_alti.innerHTML = "at " + max_speed_at_feet + " feet";
+      var max_speed_at_feet = convertAltitude(ParseValue(plane_speed_alti.innerHTML), options);
+      plane_speed_alti.innerHTML = "at " + max_speed_at_feet + " " + options.altitude;
 
-      var max_speed_in_mph = convertSpeed(ParseValue(plane_speed_value.innerHTML));
-      plane_speed_value.innerHTML = max_speed_in_mph + " mph";
+      var max_speed_in_mph = convertSpeed(ParseValue(plane_speed_value.innerHTML), options);
+      plane_speed_value.innerHTML = max_speed_in_mph + " " + options.speed;
       // End max speed conversion
 
       // Convert Max altitude
       var plane_altitude = plane_specs_blocks[2];
       var plane_max_alti = plane_altitude.getElementsByClassName("value")[0];
-      var max_altitude_in_feet = convertAltitude(ParseValue(plane_max_alti.innerHTML));
-      plane_max_alti.innerHTML = max_altitude_in_feet + " feet";
+      var max_altitude_in_feet = convertAltitude(ParseValue(plane_max_alti.innerHTML), options);
+      plane_max_alti.innerHTML = max_altitude_in_feet + " " + options.altitude;
       // End max altitude conversion
     }
     // End flight performance conversions
@@ -104,8 +129,8 @@ async function main() {
 
       for (var i = 0; i < survivability_specs_block_values.length; i++) {
         if (ParseSpaces(survivability_specs_block_values[i].innerHTML) != "") {
-          var destruction_speed = convertSpeed(ParseValue(survivability_specs_block_values[i].innerHTML));
-          survivability_specs_block_values[i].innerHTML = destruction_speed + " mph";
+          var destruction_speed = convertSpeed(ParseValue(survivability_specs_block_values[i].innerHTML), options);
+          survivability_specs_block_values[i].innerHTML = destruction_speed + " " + options.speed;
         }
       }
     }
@@ -147,49 +172,49 @@ async function main() {
 
       // Header Row Conversions
       var ctrow1_headers = ctable_rows[0].getElementsByTagName("th");
-      var ctrow1_max_speed_at_altitude = convertAltitude(ParseValue(ctrow1_headers[1].innerHTML));
-      ctrow1_headers[1].innerHTML = "Max Speed <br> (mph at " + ctrow1_max_speed_at_altitude + " feet)";
+      var ctrow1_max_speed_at_altitude = convertAltitude(ParseValue(ctrow1_headers[1].innerHTML), options);
+      ctrow1_headers[1].innerHTML = "Max Speed <br> (" + options.speed + " at " + ctrow1_max_speed_at_altitude + " " + options.altitude + ")";
 
-      ctrow1_headers[2].innerHTML = "Max altitude <br> (feet)";
-      ctrow1_headers[4].innerHTML = "Rate of Climb <br> (feet/minute)";
-      ctrow1_headers[5].innerHTML = "Take-off Run <br> (feet)";
+      ctrow1_headers[2].innerHTML = "Max altitude <br> (" + options.altitude + ")";
+      ctrow1_headers[4].innerHTML = "Rate of Climb <br> (" + options.climbSpeed + ")";
+      ctrow1_headers[5].innerHTML = "Take-off Run <br> (" + options.altitude + ")";
       // End Header Row Conversions
 
       // Stock Row Conversions
       var ctrow3_stock = ctable_rows[2].getElementsByTagName("td");
 
-      var ctrow3_ms_ab = convertSpeed(ParseValue(ctrow3_stock[0].innerHTML));
+      var ctrow3_ms_ab = convertSpeed(ParseValue(ctrow3_stock[0].innerHTML), options);
       ctrow3_stock[0].innerHTML = ctrow3_ms_ab;
 
-      var ctrow3_ms_rb = convertSpeed(ParseValue(ctrow3_stock[1].innerHTML));
+      var ctrow3_ms_rb = convertSpeed(ParseValue(ctrow3_stock[1].innerHTML), options);
       ctrow3_stock[1].innerHTML = ctrow3_ms_rb;
 
-      var ctrow3_max_alti = convertAltitude(ParseValue(ctrow3_stock[2].innerHTML));
+      var ctrow3_max_alti = convertAltitude(ParseValue(ctrow3_stock[2].innerHTML), options);
       ctrow3_stock[2].innerHTML = ctrow3_max_alti;
 
-      var ctrow3_roc_ab = convertClimbSpeed(ParseValue(ctrow3_stock[5].innerHTML));
+      var ctrow3_roc_ab = convertClimbSpeed(ParseValue(ctrow3_stock[5].innerHTML), options);
       ctrow3_stock[5].innerHTML = ctrow3_roc_ab;
 
-      var ctrow3_roc_rb = convertClimbSpeed(ParseValue(ctrow3_stock[6].innerHTML));
+      var ctrow3_roc_rb = convertClimbSpeed(ParseValue(ctrow3_stock[6].innerHTML), options);
       ctrow3_stock[6].innerHTML = ctrow3_roc_rb;
 
-      var ctrow3_tor = convertAltitude(ParseValue(ctrow3_stock[7].innerHTML));
+      var ctrow3_tor = convertAltitude(ParseValue(ctrow3_stock[7].innerHTML), options);
       ctrow3_stock[7].innerHTML = ctrow3_tor;
       // End Stock Row Conversions
 
       // Upgraded Row Conversions
       var ctrow4_stock = ctable_rows[3].getElementsByTagName("td");
 
-      var ctrow4_ms_ab = convertSpeed(ParseValue(ctrow4_stock[0].innerHTML));
+      var ctrow4_ms_ab = convertSpeed(ParseValue(ctrow4_stock[0].innerHTML), options);
       ctrow4_stock[0].innerHTML = ctrow4_ms_ab;
 
-      var ctrow4_ms_rb = convertSpeed(ParseValue(ctrow4_stock[1].innerHTML));
+      var ctrow4_ms_rb = convertSpeed(ParseValue(ctrow4_stock[1].innerHTML), options);
       ctrow4_stock[1].innerHTML = ctrow4_ms_rb;
 
-      var ctrow4_roc_ab = convertClimbSpeed(ParseValue(ctrow4_stock[4].innerHTML));
+      var ctrow4_roc_ab = convertClimbSpeed(ParseValue(ctrow4_stock[4].innerHTML), options);
       ctrow4_stock[4].innerHTML = ctrow4_roc_ab;
 
-      var ctrow4_roc_rb = convertClimbSpeed(ParseValue(ctrow4_stock[5].innerHTML));
+      var ctrow4_roc_rb = convertClimbSpeed(ParseValue(ctrow4_stock[5].innerHTML), options);
       ctrow4_stock[5].innerHTML = ctrow4_roc_rb;
       // End Upgraded Row Conversions
     }
@@ -202,30 +227,30 @@ async function main() {
       // Header Row Conversions
       var ltrow1_headers = ltable_rows[1].getElementsByTagName("th");
 
-      ltrow1_headers[0].innerHTML = "Wings (mph)";
-      ltrow1_headers[1].innerHTML = "Gear (mph)";
-      ltrow1_headers[2].innerHTML = "Flaps (mph)";
+      ltrow1_headers[0].innerHTML = "Wings (" + options.speed + ")";
+      ltrow1_headers[1].innerHTML = "Gear (" + options.speed + ")";
+      ltrow1_headers[2].innerHTML = "Flaps (" + options.speed + ")";
       // End Header Row Conversions
 
       // Limits Row Conversions
       var ltrow3_limits = ltable_rows[3].getElementsByTagName("td");
 
-      var ltrow3_wings_limit = convertSpeed(ParseValue(ltrow3_limits[0].innerHTML));
+      var ltrow3_wings_limit = convertSpeed(ParseValue(ltrow3_limits[0].innerHTML), options);
       ltrow3_limits[0].innerHTML = ltrow3_wings_limit;
 
-      var ltrow3_gear_limit = convertSpeed(ParseValue(ltrow3_limits[1].innerHTML));
+      var ltrow3_gear_limit = convertSpeed(ParseValue(ltrow3_limits[1].innerHTML), options);
       ltrow3_limits[1].innerHTML = ltrow3_gear_limit;
 
       if (ParseSpaces(ltrow3_limits[2].innerHTML) != "N/A") {
-        var ltrow3_cmbt_flaps = convertSpeed(ParseValue(ltrow3_limits[2].innerHTML));
+        var ltrow3_cmbt_flaps = convertSpeed(ParseValue(ltrow3_limits[2].innerHTML), options);
         ltrow3_limits[2].innerHTML = ltrow3_cmbt_flaps;
       }
       if (ParseSpaces(ltrow3_limits[3].innerHTML) != "N/A") {
-        var ltrow3_to_flaps = convertSpeed(ParseValue(ltrow3_limits[3].innerHTML));
+        var ltrow3_to_flaps = convertSpeed(ParseValue(ltrow3_limits[3].innerHTML), options);
         ltrow3_limits[3].innerHTML = ltrow3_to_flaps;
       }
       if (ParseSpaces(ltrow3_limits[4].innerHTML) != "N/A") {
-        var ltrow3_landing_flaps = convertSpeed(ParseValue(ltrow3_limits[4].innerHTML));
+        var ltrow3_landing_flaps = convertSpeed(ParseValue(ltrow3_limits[4].innerHTML), options);
         ltrow3_limits[4].innerHTML = ltrow3_landing_flaps;
       }
       // End Limits Row Conversions
@@ -237,7 +262,7 @@ async function main() {
 
       // Header Row Conversions
       var vtrow_headers = vtable_rows[0].getElementsByTagName("th");
-      vtrow_headers[0].innerHTML = "Optimal velocities (mph)";
+      vtrow_headers[0].innerHTML = "Optimal velocities (" + options.speed + ")";
       // End Header Row Conversions
 
       // Optimal Velocities Row Conversions
@@ -249,7 +274,7 @@ async function main() {
           sign = sign.substr(0, 4);
 
           if (ParseValue(vtrow_optimals[i].innerHTML) != "") { // Fix for when wiki does not list optimal velocities: ex "< ___" or "> ___"
-            var optimal_conversion = convertSpeed(ParseValue(vtrow_optimals[i].innerHTML));
+            var optimal_conversion = convertSpeed(ParseValue(vtrow_optimals[i].innerHTML), options);
             vtrow_optimals[i].innerHTML = sign + " " + optimal_conversion;
           }
         }
@@ -262,8 +287,8 @@ async function main() {
       var comptable_rows = compressor_table.getElementsByTagName("tr");
       var comptable_optimalaltitude = comptable_rows[3].getElementsByTagName("td")[0];
 
-      var converted_altitude = convertAltitude(ParseValue(comptable_optimalaltitude.innerHTML));
-      comptable_optimalaltitude.innerHTML = converted_altitude + " feet";
+      var converted_altitude = convertAltitude(ParseValue(comptable_optimalaltitude.innerHTML), options);
+      comptable_optimalaltitude.innerHTML = converted_altitude + " " + options.altitude;
     }
   }
   // End Aircraft Page Conversions
@@ -289,10 +314,10 @@ async function main() {
       for (var i = 0; i < fleet_mobility_values.length; i++) {
         if (ParseSpaces(fleet_mobility_values[i].innerHTML) != "forward/back") {
           var speed_values = ParseSpaces(fleet_mobility_values[i].innerHTML).split("/");
-          var forward = convertSpeed(ParseValue(speed_values[0]));
-          var backward = convertSpeed(ParseValue(speed_values[1]));
+          var forward = convertSpeed(ParseValue(speed_values[0]), options);
+          var backward = convertSpeed(ParseValue(speed_values[1]), options);
 
-          fleet_mobility_values[i].innerHTML = forward + " / " + backward + " mph";
+          fleet_mobility_values[i].innerHTML = forward + " / " + backward + " " + options.speed;
         }
       }
     }
@@ -318,26 +343,26 @@ async function main() {
 
       // Header Row Conversions
       var mctrow1_headers = mctable_rows[1].getElementsByTagName("th");
-      mctrow1_headers[2].innerHTML = "Maximum Speed (mph)";
+      mctrow1_headers[2].innerHTML = "Maximum Speed (" + options.speed + ")";
       // End Header Row Conversions
 
       // AB Row Conversions
       var mctrow3_ab = mctable_rows[4].getElementsByTagName("td");
 
-      var mctrow3_forward = convertSpeed(ParseValue(mctrow3_ab[1].innerHTML));
+      var mctrow3_forward = convertSpeed(ParseValue(mctrow3_ab[1].innerHTML), options);
       mctrow3_ab[1].innerHTML = mctrow3_forward;
 
-      var mctrow3_reverse = convertSpeed(ParseValue(mctrow3_ab[2].innerHTML));
+      var mctrow3_reverse = convertSpeed(ParseValue(mctrow3_ab[2].innerHTML), options);
       mctrow3_ab[2].innerHTML = mctrow3_reverse;
       // End AB Row Conversions
 
       // RB/SB Row Conversions
       var mctrow4_rbsb = mctable_rows[6].getElementsByTagName("td");
 
-      var mctrow4_forward = convertSpeed(ParseValue(mctrow4_rbsb[1].innerHTML));
+      var mctrow4_forward = convertSpeed(ParseValue(mctrow4_rbsb[1].innerHTML), options);
       mctrow4_rbsb[1].innerHTML = mctrow4_forward;
 
-      var mctrow4_reverse = convertSpeed(ParseValue(mctrow4_rbsb[2].innerHTML));
+      var mctrow4_reverse = convertSpeed(ParseValue(mctrow4_rbsb[2].innerHTML), options);
       mctrow4_rbsb[2].innerHTML = mctrow4_reverse;
       // End RB/SB Row Conversions
     }
@@ -367,10 +392,10 @@ async function main() {
       for (var i = 0; i < ground_speed_values.length; i++) {
         if (ParseSpaces(ground_speed_values[i].innerHTML) != "forward/back") {
           var speed_values = ParseSpaces(ground_speed_values[i].innerHTML).split("/");
-          var forward = convertSpeed(ParseValue(speed_values[0]));
-          var backward = convertSpeed(ParseValue(speed_values[1]));
+          var forward = convertSpeed(ParseValue(speed_values[0]), options);
+          var backward = convertSpeed(ParseValue(speed_values[1]), options);
 
-          ground_speed_values[i].innerHTML = forward + " / " + backward + " mph";
+          ground_speed_values[i].innerHTML = forward + " / " + backward + " " + options.speed;
         }
       }
     }
@@ -395,26 +420,26 @@ async function main() {
 
       // Header Row Conversions
       var gctrow1_headers = gctable_rows[0].getElementsByTagName("th");
-      gctrow1_headers[1].innerHTML = "Max Speed (mph)";
+      gctrow1_headers[1].innerHTML = "Max Speed (" + options.speed + ")";
       // End Header Row Conversions
 
       // Arcade Row Conversions
       var gctrow3_arcade = gctable_rows[2].getElementsByTagName("td");
 
-      var gctrow3_forward = convertSpeed(ParseValue(gctrow3_arcade[0].innerHTML));
+      var gctrow3_forward = convertSpeed(ParseValue(gctrow3_arcade[0].innerHTML), options);
       gctrow3_arcade[0].innerHTML = gctrow3_forward;
 
-      var gctrow3_reverse = convertSpeed(ParseValue(gctrow3_arcade[1].innerHTML));
+      var gctrow3_reverse = convertSpeed(ParseValue(gctrow3_arcade[1].innerHTML), options);
       gctrow3_arcade[1].innerHTML = gctrow3_reverse;
       // End AB Row Conversions
 
       // Realistic Row Conversions
       var gctrow4_realistics = gctable_rows[3].getElementsByTagName("td");
 
-      var gctrow4_forward = convertSpeed(ParseValue(gctrow4_realistics[0].innerHTML));
+      var gctrow4_forward = convertSpeed(ParseValue(gctrow4_realistics[0].innerHTML), options);
       gctrow4_realistics[0].innerHTML = gctrow4_forward;
 
-      var gctrow4_reverse = convertSpeed(ParseValue(gctrow4_realistics[1].innerHTML));
+      var gctrow4_reverse = convertSpeed(ParseValue(gctrow4_realistics[1].innerHTML), options);
       gctrow4_realistics[1].innerHTML = gctrow4_reverse;
       // End RB/SB Row Conversions
     }
@@ -452,18 +477,18 @@ async function main() {
       var heli_speed_value = heli_speed.getElementsByClassName("value")[1];
 
       // Convert Max speed at altitude
-      var max_speed_at_feet = convertAltitude(ParseValue(heli_speed_alti.innerHTML));
-      heli_speed_alti.innerHTML = "at " + max_speed_at_feet + " feet";
+      var max_speed_at_feet = convertAltitude(ParseValue(heli_speed_alti.innerHTML), options);
+      heli_speed_alti.innerHTML = "at " + max_speed_at_feet + " " + options.altitude;
 
-      var max_speed_in_mph = convertSpeed(ParseValue(heli_speed_value.innerHTML));
-      heli_speed_value.innerHTML = max_speed_in_mph + " mph";
+      var max_speed_in_mph = convertSpeed(ParseValue(heli_speed_value.innerHTML), options);
+      heli_speed_value.innerHTML = max_speed_in_mph + " " + options.speed;
       // End max speed conversion
 
       // Convert Max altitude
       var heli_altitude = heli_specs_blocks[1];
       var heli_max_alti = heli_altitude.getElementsByClassName("value")[0];
-      var max_altitude_in_feet = convertAltitude(ParseValue(heli_max_alti.innerHTML));
-      heli_max_alti.innerHTML = max_altitude_in_feet + " feet";
+      var max_altitude_in_feet = convertAltitude(ParseValue(heli_max_alti.innerHTML), options);
+      heli_max_alti.innerHTML = max_altitude_in_feet + " " + options.altitude;
       // End max altitude conversion
     }
     // End flight performance conversions
@@ -475,8 +500,8 @@ async function main() {
 
       for (var i = 0; i < survivability_specs_block_values.length; i++) {
         if (ParseSpaces(survivability_specs_block_values[i].innerHTML) != "") {
-          var destruction_speed = convertSpeed(ParseValue(survivability_specs_block_values[i].innerHTML));
-          survivability_specs_block_values[i].innerHTML = destruction_speed + " mph";
+          var destruction_speed = convertSpeed(ParseValue(survivability_specs_block_values[i].innerHTML), options);
+          survivability_specs_block_values[i].innerHTML = destruction_speed + " " + options.speed;
         }
       }
     }
@@ -500,32 +525,32 @@ async function main() {
 
       // Header Row Conversions
       var ctrow1_headers = ctable_rows[0].getElementsByTagName("th");
-      var ctrow1_max_speed_at_altitude = convertAltitude(ParseValue(ctrow1_headers[1].innerHTML));
-      ctrow1_headers[1].innerHTML = "Max Speed <br> (mph at " + ctrow1_max_speed_at_altitude + " feet)";
+      var ctrow1_max_speed_at_altitude = convertAltitude(ParseValue(ctrow1_headers[1].innerHTML), options);
+      ctrow1_headers[1].innerHTML = "Max Speed <br> (" + options.speed + " at " + ctrow1_max_speed_at_altitude + " " + options.altitude + ")";
 
-      ctrow1_headers[2].innerHTML = "Max altitude <br> (feet)";
+      ctrow1_headers[2].innerHTML = "Max altitude <br> (" + options.altitude + ")";
       // End Header Row Conversions
 
       // Stock Row Conversions
       var ctrow3_stock = ctable_rows[2].getElementsByTagName("td");
 
-      var ctrow3_ms_ab = convertSpeed(ParseValue(ctrow3_stock[0].innerHTML));
+      var ctrow3_ms_ab = convertSpeed(ParseValue(ctrow3_stock[0].innerHTML), options);
       ctrow3_stock[0].innerHTML = ctrow3_ms_ab;
 
-      var ctrow3_ms_rb = convertSpeed(ParseValue(ctrow3_stock[1].innerHTML));
+      var ctrow3_ms_rb = convertSpeed(ParseValue(ctrow3_stock[1].innerHTML), options);
       ctrow3_stock[1].innerHTML = ctrow3_ms_rb;
 
-      var ctrow3_max_alti = convertAltitude(ParseValue(ctrow3_stock[2].innerHTML));
+      var ctrow3_max_alti = convertAltitude(ParseValue(ctrow3_stock[2].innerHTML), options);
       ctrow3_stock[2].innerHTML = ctrow3_max_alti;
       // End Stock Row Conversions
 
       // Upgraded Row Conversions
       var ctrow4_upgraded = ctable_rows[3].getElementsByTagName("td");
 
-      var ctrow4_ms_ab = convertSpeed(ParseValue(ctrow4_upgraded[0].innerHTML));
+      var ctrow4_ms_ab = convertSpeed(ParseValue(ctrow4_upgraded[0].innerHTML), options);
       ctrow4_upgraded[0].innerHTML = ctrow4_ms_ab;
 
-      var ctrow4_ms_rb = convertSpeed(ParseValue(ctrow4_upgraded[1].innerHTML));
+      var ctrow4_ms_rb = convertSpeed(ParseValue(ctrow4_upgraded[1].innerHTML), options);
       ctrow4_upgraded[1].innerHTML = ctrow4_ms_rb;
       // End Upgraded Row Conversions
     }
