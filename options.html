@@ -1,37 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>War Thunder Wiki Americanifier Settings</title>
+    <title>War Thunder Wiki Unit Converter Settings</title>
 </head>
 <body>
-<div>
-    <label>Speed</label>
-    <select id="speed">
-        <option value="mph">mph</option>
-        <option value="kts">kts</option>
-        <option value="km/h">km/h</option>
-    </select>
-</div>
+    <div>
+        <label>Speed:</label>
+        <select id="speed">
+            <option value="mph">mph</option>
+            <option value="kts">kts</option>
+            <option value="km/h">km/h</option>
+        </select>
+    </div>
 
-<div>
-    <label>Altitude</label>
-    <select id="altitude">
-        <option value="feet">feet</option>
-        <option value="meters">meters</option>
-    </select>
-</div>
+    <div>
+        <label>Altitude:</label>
+        <select id="altitude">
+            <option value="feet">feet</option>
+            <option value="meters">meters</option>
+        </select>
+    </div>
 
-<div>
-    <label>Climb Speed</label>
-    <select id="climb-speed">
-        <option value="feet/minute">feet/minute</option>
-        <option value="meters/second">meters/second</option>
-    </select>
-</div>
+    <div>
+        <label>Rate of Climb:</label>
+        <select id="climb-speed">
+            <option value="feet/minute">feet/minute</option>
+            <option value="meters/second">meters/second</option>
+        </select>
+    </div>
 
-<div id="status"></div>
-<button id="save">Save</button>
+    <br><button id="save">Save</button> <span id="status"></span>
 
-<script src="options.js"></script>
+    <script src="options.js"></script>
 </body>
 </html>

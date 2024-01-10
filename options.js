@@ -22,7 +22,7 @@ const saveOptions = () => {
     status.textContent = 'Unit settings saved.';
     setTimeout(() => {
       status.textContent = '';
-    }, 750);
+    }, 2000);
   });
 };
 document.addEventListener('DOMContentLoaded', restoreOptions);

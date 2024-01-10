@@ -1,8 +1,8 @@
 {
-    "name": "WT Wiki Americanifier",
+    "name": "WT Wiki Unit Converter",
     "version": "2.0",
     "manifest_version": 3,
-    "description": "Changes Km/h to Mph and Meters to Feet.",
+    "description": "Adds the ability to change the units for Speed, Altitude, and Rate of Climb on the WT Wiki.",
     "icons": {
         "16": "icons/wtwa16x16.png",
         "32": "icons/wtwa32x32.png",
@@ -13,7 +13,7 @@
     "content_scripts": [
      {
        "matches": ["https://wiki.warthunder.com/*"],
-       "js": ["americanify.js"]
+       "js": ["unit_converter.js"]
      }],
     "browser_specific_settings": {
       "gecko": {
